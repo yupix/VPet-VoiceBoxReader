@@ -1,13 +1,13 @@
 ﻿using LinePutScript;
-using MediaToolkit;
-using MediaToolkit.Model;
-using MediaToolkit.Options;
+//using MediaToolkit;
+//using MediaToolkit.Model;
+//using MediaToolkit.Options;
+using NAudio.Wave;
 using Newtonsoft.Json;
 using Panuon.WPF.UI;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -135,15 +135,26 @@ namespace VPet.Plugin.VPet_VoiceBox
 
         public void ConvertToMp3(string wavFilePath, string mp3FilePath)
         {
-            MediaFile inputFile = new MediaFile { Filename = wavFilePath };
-            MediaFile outputFile = new MediaFile { Filename = mp3FilePath };
+            /*
+            MediaFile inputFile = new() { Filename = wavFilePath };
+            MediaFile outputFile = new() { Filename = mp3FilePath };
+            */
 
-            using (var engine = new Engine())
+            using var reader = new WaveFileReader(wavFilePath);
+            try
             {
-                engine.GetMetadata(inputFile);
-                var options = new ConversionOptions { AudioSampleRate = AudioSampleRate.Hz44100 };
-                engine.Convert(inputFile, outputFile, options);
+                MediaFoundationEncoder.EncodeToMp3(reader, mp3FilePath);
+            } catch (InvalidOperationException ex)
+            {
+                MessageBoxX.Show(ex.Message);
             }
+
+
+            /*using var engine = new Engine();
+            engine.GetMetadata(inputFile);
+            var options = new ConversionOptions { AudioSampleRate = AudioSampleRate.Hz44100 };
+            engine.Convert(inputFile, outputFile, options);
+            */
         }
 
         public HttpRequestException RequestErrorHandler()

@@ -19,14 +19,8 @@ namespace VPet.Plugin.VPet_VoiceBox
         public override void LoadPlugin()
         {
             
-            var line = MW.Set.FindLine("VoiceBoxReader");
-            if (line == null)
-            {
-                Set = new Setting();
-            } else
-            {
-                Set = LPSConvert.DeserializeObject<Setting>(line);
-            }
+            Set = LPSConvert.DeserializeObject <Setting>(MW.Set["VoiceBoxReader"]);
+
             voiceBoxClient = new VoiceBoxClient(this, Set.VoiceBoxEngineUri);
             if (!Directory.Exists(GraphCore.CachePath + @"\voice"))
                 Directory.CreateDirectory(GraphCore.CachePath + @"\voice");
@@ -47,8 +41,7 @@ namespace VPet.Plugin.VPet_VoiceBox
 
         public void SaveSetting()
         {
-            MW.Set.Remove("VoiceBoxReader");
-            MW.Set.Add(LPSConvert.SerializeObject(Set, "VoiceBoxReader"));
+            MW.Set["VoiceBoxReader"] = LPSConvert.SerializeObject(Set, "VoiceBoxReader");
         }
 
         public override void Setting()
